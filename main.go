@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/alecthomas/kingpin"
 	"github.com/fatih/color"
@@ -25,6 +26,7 @@ func main() {
 	}
 	// pp.Print(conf)
 
+	ok := true
 	for name, config := range conf.CheckPlugins {
 		checker := checks.Checker{Name: name, Config: config}
 		report := checker.Check()
@@ -32,6 +34,11 @@ func main() {
 		if *verbose {
 			logger.Print(report.Message)
 		}
+		ok = ok && report.Status == checks.StatusOK
+	}
+
+	if !ok {
+		os.Exit(1)
 	}
 }
 
